@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Delaunay triangulation</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+    <h1>Delaunay triangulation</h1>
+    <canvas width="500" height="500" id="canvas"></canvas>
+    <button onclick="addPoint()" >Add</button>
+
+    <script src="triangulation.js"></script>
+    <script>
+        let canvas = document.getElementById("canvas");
+        let ctx = canvas.getContext("2d");
+
+        let points = [];
+
+        drawFrame();
+        
+
+        function drawFrame()
+        {
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, canvas.height);
+            ctx.lineTo(canvas.width - 1, canvas.height);
+            ctx.lineTo(canvas.width - 1, 0);
+            ctx.lineTo(0, 0);
+            ctx.stroke();
+        }
+
+        function addPoint()
+        {
+            points.push([Math.floor(Math.random() * canvas.width + 1), Math.floor(Math.random() * canvas.height + 1)]);
+            for(i=0; i<points.length; i++)
+            {
+                ctx.fillRect(points[i][0] - 5, points[i][1] + 5, 10, 10);
+            }
+        }
+    </script>
+</body>
+</html>
