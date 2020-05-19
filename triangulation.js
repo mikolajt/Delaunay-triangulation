@@ -18,9 +18,7 @@ function triagle (v0, v1, v2) {
         this.radius = radius;
     }
 
-    this.circumscribed_circle = getCircumscribedCircle();
-
-    function getCircumscribedCircle() {
+    this.circumscribed_circle = () => {
         //from https://web.archive.org/web/20071030134248/http://www.exaflop.org/docs/cgafaq/cga1.html#Subject%201.01:%20How%20do%20I%20rotate%20a%202D%20point
 
         let A = this.v1.x - this.v0.x,
@@ -72,16 +70,16 @@ function triagle (v0, v1, v2) {
 function triangulate(vertexes) {
     if(vertexes.length >= 2) {
         let min_x = Math.min(vertexes.x), 
-        min_y = Math.min(vertexes.y),
-        max_x = Math.max(vertexes.x),
-        max_y = Math.max(vertexes.y),
-        dx = (max_x - min_x),
-        dy = (max_y - min_y),
-        v0 = new vertex(min_x - dy * Math.sqrt(3) / 3, min_y),
-        v1 = new vertex(max_x + dy * Math.sqrt(3) / 3, min_y),
-        v2 = new vertex((min_x + max_x) * 0.5, max_y + dx * Math.sqrt(3) * 0.5),
-        super_triangle = new triagle(v0, v1, v2),
-        triangles = [];
+            min_y = Math.min(vertexes.y),
+            max_x = Math.max(vertexes.x),
+            max_y = Math.max(vertexes.y),
+            dx = (max_x - min_x),
+            dy = (max_y - min_y),
+            v0 = new vertex(min_x - dy * Math.sqrt(3) / 3, min_y),
+            v1 = new vertex(max_x + dy * Math.sqrt(3) / 3, min_y),
+            v2 = new vertex((min_x + max_x) * 0.5, max_y + dx * Math.sqrt(3) * 0.5),
+            super_triangle = new triagle(v0, v1, v2),
+            triangles = [];
 
         triangles.push(super_triangle);
 
