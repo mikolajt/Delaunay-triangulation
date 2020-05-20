@@ -8,7 +8,7 @@ function edge (v0, v1) {
     this.v1 = v1;
 }
 
-function triagle (v0, v1, v2) {
+function triangle (v0, v1, v2) {
     this.v0 = v0;
     this.v1 = v1;
     this.v2 = v2;
@@ -47,7 +47,7 @@ function triagle (v0, v1, v2) {
             return new circumscribed_circle(center, radius);
     }
 
-    function isInCircumscribedCircle(vertex) {
+    this.isInCircumscribedCircle = (vertex) => {
         let distance = Math.hypot(this.circumscribed_circle.x - vertex.x, this.circumscribed_circle.y - vertex.y);
 
         if(distance > this.circumscribed_circle.radius) {
@@ -58,7 +58,7 @@ function triagle (v0, v1, v2) {
         }
     } 
 
-    function triangleToEdges() {
+    this.triangleToEdges = () => {
         let edges = [];
         edges.push(new edge(this.v0, this.v1));
         edges.push(new edge(this.v0, this.v2));
@@ -67,31 +67,57 @@ function triagle (v0, v1, v2) {
     }
 }
 
+function min(array){
+    let x = Number.POSITIVE_INFINITY;
+    for (i = 0; i < array.length; i++) {
+        if(array[i] < x) {
+            x = array[i];
+        }
+    }
+    return x;
+}
+
+function max(array){
+    let x = Number.NEGATIVE_INFINITY;
+    for (i = 0; i < array.length; i++) {
+        if(array[i] > x) {
+            x = array[i];
+        }
+    }
+    return x;
+}
+
 function triangulate(vertexes) {
     if(vertexes.length >= 2) {
-        let min_x = Math.min(vertexes.x), 
-            min_y = Math.min(vertexes.y),
-            max_x = Math.max(vertexes.x),
-            max_y = Math.max(vertexes.y),
+        let min_x = min(vertexes.x), 
+            min_y = min(vertexes.y),
+            max_x = max(vertexes.x),
+            max_y = max(vertexes.y),
             dx = (max_x - min_x),
             dy = (max_y - min_y),
             v0 = new vertex(min_x - dy * Math.sqrt(3) / 3, min_y),
             v1 = new vertex(max_x + dy * Math.sqrt(3) / 3, min_y),
             v2 = new vertex((min_x + max_x) * 0.5, max_y + dx * Math.sqrt(3) * 0.5),
-            super_triangle = new triagle(v0, v1, v2),
+            super_triangle = new triangle(v0, v1, v2),
             triangles = [];
 
         triangles.push(super_triangle);
 
         vertexes.forEach(vertex => {
-            triangles = addVertex(vertex, triagles);
+            triangles = addVertex(vertex, triangles);
         });
 
-        triangles.forEach(triangle => {
-            if(triagle.v0 == super_triangle.v0 || triagle.v0 == super_triangle.v1 || triagle.v0 == super_triangle.v2 || triagle.v1 == super_triangle.v1 || triagle.v1 == super_triangle.v2 || triagle.v2 == super_triangle.v2) {
+        for(i = triangles.length - 1; i >= 0; i--) {
+            if(triangles[i].v0 == super_triangle.v0 || triangles[i].v0 == super_triangle.v1 || triangles[i].v0 == super_triangle.v2 || triangles[i].v1 == super_triangle.v1 || triangles[i].v1 == super_triangle.v2 || triangles[i].v2 == super_triangle.v2) {
+                triangles.splice(triangles[i]);
+            }
+        }
+
+        /*triangles.forEach(triangle => {
+            if(triangle.v0 == super_triangle.v0 || triangle.v0 == super_triangle.v1 || triangle.v0 == super_triangle.v2 || triangle.v1 == super_triangle.v1 || triangle.v1 == super_triangle.v2 || triangle.v2 == super_triangle.v2) {
                 triangles.splice(triangle);
             }
-        })
+        })*/
         return triangles;
     }
     return null;
@@ -109,10 +135,9 @@ function addVertex(vertex, triangles) {
                 buffer.push(edges[i+1]);
             }
         }
-        buffer.sort();
 
         for(i = 0; i<edges.length; i++) {
-            if(!buffer.includes(i)) {
+            if(!buffer.has(i)) {
                 new_edges.push(edges[i]);
             }
         }
@@ -122,12 +147,19 @@ function addVertex(vertex, triangles) {
     
     let edges_buffer = [];
 
-    triangles.forEach(triangle => {
+    for(i = triangles.length - 1; i >= 0; i--) {
+        if (triangles[i].isInCircumscribedCircle(vertex)) {
+            edges_buffer.push(triangles[i].triangleToEdges());
+            triangles.splice(triangles[i]);
+        }
+    }
+
+    /*triangles.forEach(triangle => {
         if (triangle.isInCircumscribedCircle(vertex)) {
             edges_buffer.push(triangle.triangleToEdges());
             triangles.splice(triangle);
         }
-    })
+    })*/
     
     edges_buffer = removeDoubleEdges(edges_buffer);
 
