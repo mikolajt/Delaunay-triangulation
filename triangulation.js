@@ -67,32 +67,20 @@ function triangle (v0, v1, v2) {
     }
 }
 
-function min(array){
-    let x = Number.POSITIVE_INFINITY;
-    for (i = 0; i < array.length; i++) {
-        if(array[i] < x) {
-            x = array[i];
-        }
-    }
-    return x;
-}
-
-function max(array){
-    let x = Number.NEGATIVE_INFINITY;
-    for (i = 0; i < array.length; i++) {
-        if(array[i] > x) {
-            x = array[i];
-        }
-    }
-    return x;
-}
-
 function triangulate(vertexes) {
-    if(vertexes.length >= 2) {
-        let min_x = min(vertexes.x), 
-            min_y = min(vertexes.y),
-            max_x = max(vertexes.x),
-            max_y = max(vertexes.y),
+
+    if(vertexes.length > 2) {
+        let vertexesx = [],
+            vertexesy = [];
+        vertexes.forEach(vertex => {
+            vertexesx.push(vertex.x);
+            vertexesy.push(vertex.y);
+        })
+
+        let min_x = Math.min(...vertexesx),
+            min_y = Math.min(...vertexesy),
+            max_x = Math.max(...vertexesx),
+            max_y = Math.max(...vertexesy),
             dx = (max_x - min_x),
             dy = (max_y - min_y),
             v0 = new vertex(min_x - dy * Math.sqrt(3) / 3, min_y),
@@ -108,8 +96,8 @@ function triangulate(vertexes) {
         });
 
         for(i = triangles.length - 1; i >= 0; i--) {
-            if(triangles[i].v0 == super_triangle.v0 || triangles[i].v0 == super_triangle.v1 || triangles[i].v0 == super_triangle.v2 || triangles[i].v1 == super_triangle.v1 || triangles[i].v1 == super_triangle.v2 || triangles[i].v2 == super_triangle.v2) {
-                triangles.splice(triangles[i]);
+            if((triangles[i].v0.x == super_triangle.v0.x && triangles[i].v0.y == super_triangle.v0.y) || (triangles[i].v0.x == super_triangle.v1.x && triangles[i].v0.y == super_triangle.v1.y) || (triangles[i].v0.x == super_triangle.v2.x && triangles[i].v0.y == super_triangle.v2.y) || (triangles[i].v1.x == super_triangle.v1.x && triangles[i].v1.y == super_triangle.v1.y) || (triangles[i].v1.x == super_triangle.v2.x && triangles[i].v1.y == super_triangle.v2.y) || (triangles[i].v2.x == super_triangle.v2.x && triangles[i].v2.y == super_triangle.v2.y)) {
+                triangles.splice(i, 1);
             }
         }
 
@@ -149,8 +137,8 @@ function addVertex(vertex, triangles) {
 
     for(i = triangles.length - 1; i >= 0; i--) {
         if (triangles[i].isInCircumscribedCircle(vertex)) {
-            edges_buffer.push(triangles[i].triangleToEdges());
-            triangles.splice(triangles[i]);
+            edges_buffer.push(...triangles[i].triangleToEdges());
+            triangles.splice(i, 1);
         }
     }
 
