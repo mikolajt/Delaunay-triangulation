@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Delaunay triangulation</h1>
-    <canvas width="500" height="500" id="canvas"></canvas>
+    <canvas width="1000" height="1000" id="canvas"></canvas>
     <button onclick="addPoint()">Add</button>
 
     <script src="triangulation.js"></script>
@@ -38,7 +38,7 @@
             points.push(new vertex(Math.floor(Math.random() * canvas.width + 1), Math.floor(Math.random() * canvas.height + 1)));
             for(i=0; i<points.length; i++)
             {
-                ctx.fillRect(points[i].x - 5, points[i].y + 5, 10, 10);
+                ctx.fillRect(points[i].x - 5, points[i].y - 5, 10, 10);
                 console.log("x: " + points[i].x + " y: " + points[i].y);
             }
             triangles = triangulate(points);
